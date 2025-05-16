@@ -29,6 +29,9 @@ builtin = {
         else f"{cmd}: not found",
     ),
     "pwd": lambda *_: print(os.getcwd()),
+    "cd": lambda path: os.chdir(path)
+    if os.path.isdir(path)
+    else print(f"cd: {path}: No such file or directory"),
 }
 
 
@@ -43,6 +46,8 @@ def main():
             case cmd, *args if cmd in path:
                 fullpath = path[cmd].split(os.pathsep)[0]
                 subprocess.run([cmd, *args], executable=fullpath)
+            case cmd, *args if os.path.isfile(cmd) and os.access(cmd, os.X_OK):
+                subprocess.run([cmd, *args])
             case cmd, *_:
                 print(f"{cmd}: command not found")
 
