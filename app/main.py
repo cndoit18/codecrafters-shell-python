@@ -39,7 +39,7 @@ def main():
     while True:
         sys.stdout.write("$ ")
 
-        command = input()
+        command = input().replace("~", os.path.expanduser("~"))
         match command.split():
             case cmd, *args if cmd in builtin:
                 builtin[cmd](*args)
