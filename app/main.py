@@ -1,5 +1,6 @@
 import sys
 import os
+import subprocess
 
 
 def load_path():
@@ -42,8 +43,11 @@ def main():
                 builtin["echo"](*args)
             case "type", cmd:
                 builtin["type"](cmd)
-            case _:
-                print(f"{command}: command not found")
+            case cmd, *args if cmd in path:
+                fullpath = path[cmd].split(os.pathsep)[0]
+                subprocess.run([cmd, *args], executable=fullpath)
+            case cmd, *_:
+                print(f"{cmd}: command not found")
 
 
 if __name__ == "__main__":
