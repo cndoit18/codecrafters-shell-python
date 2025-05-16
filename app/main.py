@@ -28,6 +28,7 @@ builtin = {
         if cmd in path
         else f"{cmd}: not found",
     ),
+    "pwd": lambda *_: print(os.getcwd()),
 }
 
 
@@ -37,12 +38,8 @@ def main():
 
         command = input()
         match command.split():
-            case "exit", *code:
-                builtin["exit"](*code)
-            case "echo", *args:
-                builtin["echo"](*args)
-            case "type", cmd:
-                builtin["type"](cmd)
+            case cmd, *args if cmd in builtin:
+                builtin[cmd](*args)
             case cmd, *args if cmd in path:
                 fullpath = path[cmd].split(os.pathsep)[0]
                 subprocess.run([cmd, *args], executable=fullpath)
