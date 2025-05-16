@@ -1,0 +1,7 @@
+[project]
+name = "codecrafters-shell-python"
+version = "0.1.0"
+description = "Build your own Shell"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = []
