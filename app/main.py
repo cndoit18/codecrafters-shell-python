@@ -39,8 +39,8 @@ def main():
     while True:
         sys.stdout.write("$ ")
 
-        command = input().replace("~", os.path.expanduser("~"))
-        match command.split():
+        command = parse_line(input())
+        match command:
             case cmd, *args if cmd in builtin:
                 builtin[cmd](*args)
             case cmd, *args if cmd in path:
@@ -50,6 +50,38 @@ def main():
                 subprocess.run([cmd, *args])
             case cmd, *_:
                 print(f"{cmd}: command not found")
+
+
+def parse_line(command: str) -> list[str]:
+    command = command.replace("~", os.path.expanduser("~"))
+    cmds = []
+    previous_is_string = False
+    while command:
+        c = ""
+        match command[0]:
+            case '"' | "'":
+                sign = command[0]
+                command = command[1:]
+                while command and command[0] != sign:
+                    c += command[0]
+                    command = command[1:]
+                if command:
+                    command = command[1:]
+                if previous_is_string:
+                    cmds[-1] += c
+                    continue
+                previous_is_string = True
+            case " ":
+                command = command[1:]
+                previous_is_string = False
+                continue
+            case _:
+                while command and command[0] != " ":
+                    c += command[0]
+                    command = command[1:]
+                previous_is_string = False
+        cmds.append(c)
+    return cmds
 
 
 if __name__ == "__main__":
